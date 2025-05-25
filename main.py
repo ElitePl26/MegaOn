@@ -71,7 +71,7 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
         texto_pagamento = (
             "✅ Ou clique aqui pra pagar via MercadoPago:"
 
-"
+
             "💳 " + init_point + "
 
 "
