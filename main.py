@@ -69,7 +69,7 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
         await context.bot.send_photo(chat_id=chat_id, photo=f"data:image/jpeg;base64,{qr_data}")
 
         texto_pagamento = (
-            "✅ Ou clique aqui pra pagar via MercadoPago:
+            "✅ Ou clique aqui pra pagar via MercadoPago:"
 
 "
             "💳 " + init_point + "
