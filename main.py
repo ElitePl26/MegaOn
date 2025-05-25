@@ -1,8 +1,8 @@
-
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InputFile
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 import logging
 import requests
+import os
 
 # === CONFIG ===
 TELEGRAM_TOKEN = '7546206183:AAEDtig95ySDic82smvP_EHLIDkvEoi8Iu4'
@@ -14,12 +14,11 @@ logging.basicConfig(level=logging.INFO)
 
 # === Função /start ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
- try:
-    with open("banner.jpg", "rb") as image:
-        await context.bot.send_photo(chat_id=update.effective_chat.id, photo=InputFile(image))
-except FileNotFoundError:
-    print("⚠️ banner.jpg não encontrado. Pulando envio de imagem.")
-
+    try:
+        with open("banner.jpg", "rb") as image:
+            await context.bot.send_photo(chat_id=update.effective_chat.id, photo=InputFile(image))
+    except FileNotFoundError:
+        print("⚠️ banner.jpg não encontrado. Pulando envio de imagem.")
 
     msg = (
         "🔥💀 BEM-VINDO AO *MEGA VAZA +* — O ESQUEMA MAIS INSANO DO BRASIL! 🔥💀\n\n"
@@ -91,22 +90,20 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=chat_id, text=f"✅ Você escolheu o plano *{plano_nome}*. Gerando QR Code de pagamento PIX...")
     await gerar_pagamento(chat_id, context, plano_nome, valor)
 
+# === Tratador de Erros ===
+async def erro(update: object, context: ContextTypes.DEFAULT_TYPE):
+    print(f"❌ ERRO DETECTADO: {context.error}")
+    if update and hasattr(update, "message") and update.message:
+        try:
+            await update.message.reply_text("⚠️ Algo deu errado. Tenta de novo mais tarde!")
+        except:
+            pass
+
 # === EXECUÇÃO DO BOT ===
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(handle_button))
-
-print("🤖 BOT RODANDO NO GRAU 🔥")
-
-# === Tratador de erros ===
-async def erro(update, context):
-    print(f"❌ ERRO NO BOT: {context.error}")
-    if update:
-        try:
-            await update.message.reply_text("⚠️ Deu ruim aqui, mano. Tenta de novo mais tarde.")
-        except:
-            pass
-
 app.add_error_handler(erro)
 
+print("🤖 BOT RODANDO COM PROTEÇÃO CONTRA ERROS 🔥")
 app.run_polling()
