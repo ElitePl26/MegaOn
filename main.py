@@ -68,13 +68,19 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
 
         await context.bot.send_photo(chat_id=chat_id, photo=f"data:image/jpeg;base64,{qr_data}")
 
+        texto_pagamento = (
+            "✅ Ou clique aqui pra pagar via MercadoPago:
+
+"
+            "💳 " + init_point + "
+
+"
+            "⚠️ Após o pagamento, aguarde a confirmação automática!"
+        )
+
         await context.bot.send_message(
             chat_id=chat_id,
-            text=f"✅ Ou clique aqui pra pagar via MercadoPago:
-
-💳 {init_point}
-
-⚠️ Após o pagamento, aguarde a confirmação automática!",
+            text=texto_pagamento,
             disable_web_page_preview=True
         )
     else:
@@ -92,7 +98,7 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     }
 
     plano_nome, valor = planos.get(query.data, ('PLANO DESCONHECIDO', 0))
-    await context.bot.send_message(chat_id=chat_id, text=f"✅ Você escolheu o plano *{plano_nome}*. Gerando opções de pagamento...")
+    await context.bot.send_message(chat_id=chat_id, text="✅ Você escolheu o plano *" + plano_nome + "*. Gerando opções de pagamento...", parse_mode='Markdown')
     await gerar_pagamento(chat_id, context, plano_nome, valor)
 
 async def erro(update: object, context: ContextTypes.DEFAULT_TYPE):
