@@ -37,7 +37,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(msg, reply_markup=reply_markup, parse_mode='Markdown')
 
-# === Função MercadoPago PIX ===
+# === Função MercadoPago PIX + Link ===
 async def gerar_pagamento(chat_id, context, plano_nome, valor):
     preference_data = {
         "items": [{
@@ -68,11 +68,22 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
     if response.status_code == 201:
         data = response.json()
         qr_data = data["point_of_interaction"]["transaction_data"]["qr_code_base64"]
+        init_point = data["init_point"]
 
+        # Envia QR code real PIX
         await context.bot.send_photo(chat_id=chat_id, photo=f"data:image/jpeg;base64,{qr_data}")
-        await context.bot.send_message(chat_id=chat_id, text="⚠️ Após o pagamento, aguarde a confirmação automática e seu acesso será liberado! 🔓")
+
+        # Envia link de pagamento MercadoPago
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text=f"✅ Ou clique aqui pra pagar via MercadoPago:
+💳 {init_point}
+
+⚠️ Após o pagamento, aguarde a confirmação automática!",
+            disable_web_page_preview=True
+        )
     else:
-        await context.bot.send_message(chat_id=chat_id, text="❌ Erro ao gerar QR Code. Tente novamente mais tarde.")
+        await context.bot.send_message(chat_id=chat_id, text="❌ Erro ao gerar pagamento. Tente novamente mais tarde.")
 
 # === Callback de Botão ===
 async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -87,7 +98,7 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     }
 
     plano_nome, valor = planos.get(query.data, ('PLANO DESCONHECIDO', 0))
-    await context.bot.send_message(chat_id=chat_id, text=f"✅ Você escolheu o plano *{plano_nome}*. Gerando QR Code de pagamento PIX...")
+    await context.bot.send_message(chat_id=chat_id, text=f"✅ Você escolheu o plano *{plano_nome}*. Gerando opções de pagamento...")
     await gerar_pagamento(chat_id, context, plano_nome, valor)
 
 # === Tratador de Erros ===
@@ -105,5 +116,5 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(handle_button))
 app.add_error_handler(erro)
 
-print("🤖 BOT RODANDO COM PROTEÇÃO CONTRA ERROS 🔥")
+print("🤖 BOT RODANDO COM PIX + MERCADOPAGO 🔥")
 app.run_polling()
