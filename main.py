@@ -4,15 +4,12 @@ import logging
 import requests
 import os
 
-# === CONFIG ===
 TELEGRAM_TOKEN = '7546206183:AAEDtig95ySDic82smvP_EHLIDkvEoi8Iu4'
 MERCADOPAGO_TOKEN = 'APP_USR-5300625159076055-052416-12c5d5edf2cdb4033f8294a9eae38860-2100127663'
 WEBHOOK_URL = 'https://vaza24h.onrender.com/webhook'
 
-# === LOGGING ===
 logging.basicConfig(level=logging.INFO)
 
-# === Função /start ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         with open("banner.jpg", "rb") as image:
@@ -21,11 +18,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print("⚠️ banner.jpg não encontrado. Pulando envio de imagem.")
 
     msg = (
-        "🔥💀 BEM-VINDO AO *MEGA VAZA +* — O ESQUEMA MAIS INSANO DO BRASIL! 🔥💀\n\n"
+        "🔥💀 BEM-VINDO AO *MEGA VAZA +* — O ESQUEMA MAIS INSANO DO BRASIL! 🔥💀\n"
         "😈 Aqui o vazamento é 24 HORAS, sem filtro, sem censura e sem pena!\n"
-        "🌶️ Só conteúdo 🔞 premium dos mais brabos, atualizado toda hora 💦\n\n"
-        "🚨 *PROMOÇÃO ATIVA HOJE!* Aproveite os *planos VIP* e libere acesso total ao 🔓 conteúdo +18 mais hypado da net 💣\n\n"
-        "🧠 NÃO É GRUPOZINHO COM PRINT! Aqui é link, vídeo, pack e streaming sem miséria 😎\n\n"
+        "🌶️ Só conteúdo 🔞 premium dos mais brabos, atualizado toda hora 💦\n"
+        "🚨 *PROMOÇÃO ATIVA HOJE!* Aproveite os *planos VIP* e libere acesso total ao 🔓 conteúdo +18 mais hypado da net 💣\n"
+        "🧠 NÃO É GRUPOZINHO COM PRINT! Aqui é link, vídeo, pack e streaming sem miséria 😎\n"
         "👇 ESCOLHA UM PLANO ABAIXO E ENTRE PARA O SUBMUNDO 👇"
     )
 
@@ -37,7 +34,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(msg, reply_markup=reply_markup, parse_mode='Markdown')
 
-# === Função MercadoPago PIX + Link ===
 async def gerar_pagamento(chat_id, context, plano_nome, valor):
     preference_data = {
         "items": [{
@@ -70,10 +66,8 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
         qr_data = data["point_of_interaction"]["transaction_data"]["qr_code_base64"]
         init_point = data["init_point"]
 
-        # Envia QR code real PIX
         await context.bot.send_photo(chat_id=chat_id, photo=f"data:image/jpeg;base64,{qr_data}")
 
-        # Envia link de pagamento MercadoPago com string bem fechada
         await context.bot.send_message(
             chat_id=chat_id,
             text=f"✅ Ou clique aqui pra pagar via MercadoPago:
@@ -86,7 +80,6 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
     else:
         await context.bot.send_message(chat_id=chat_id, text="❌ Erro ao gerar pagamento. Tente novamente mais tarde.")
 
-# === Callback de Botão ===
 async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -102,7 +95,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=chat_id, text=f"✅ Você escolheu o plano *{plano_nome}*. Gerando opções de pagamento...")
     await gerar_pagamento(chat_id, context, plano_nome, valor)
 
-# === Tratador de Erros ===
 async def erro(update: object, context: ContextTypes.DEFAULT_TYPE):
     print(f"❌ ERRO DETECTADO: {context.error}")
     if update and hasattr(update, "message") and update.message:
@@ -111,7 +103,6 @@ async def erro(update: object, context: ContextTypes.DEFAULT_TYPE):
         except:
             pass
 
-# === EXECUÇÃO DO BOT ===
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(handle_button))
