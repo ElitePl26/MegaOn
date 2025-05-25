@@ -63,29 +63,25 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
 
     if response.status_code == 201:
         data = response.json()
-        qr_data = data["point_of_interaction"]["transaction_data"]["qr_code_base64"]
         init_point = data["init_point"]
+        qr_code_base64 = data["point_of_interaction"]["transaction_data"]["qr_code_base64"]
 
-        await context.bot.send_photo(chat_id=chat_id, photo=f"data:image/jpeg;base64,{qr_data}")
-
-        texto_pagamento = (
-            "✅ Ou clique aqui pra pagar via MercadoPago:"
-
-
-            "💳 " "+ init_point + "
-
-
-            "⚠️ Após o pagamento, aguarde a confirmação automática!"
+        # Mensagem com instruções e valor
+        msg = (
+            f"✅ Você escolheu o plano *{plano_nome}*.\n"
+            f"💸 Valor: R$ {valor:.2f}\n\n"
+            f"📲 Escaneie o QR Code abaixo para pagar via PIX\n"
+            f"Ou clique no link para pagar com cartão, saldo ou boleto:\n\n"
+            f"🔗 {init_point}\n\n"
+            f"⚠️ Após o pagamento, aguarde a confirmação automática!"
         )
 
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=texto_pagamento,
-            disable_web_page_preview=True
-        )
+        # Enviar QR Code
+        await context.bot.send_photo(chat_id=chat_id, photo=f"data:image/jpeg;base64,{qr_code_base64}")
+        # Enviar texto
+        await context.bot.send_message(chat_id=chat_id, text=msg, parse_mode="Markdown", disable_web_page_preview=True)
     else:
         await context.bot.send_message(chat_id=chat_id, text="❌ Erro ao gerar pagamento. Tente novamente mais tarde.")
-
 async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
