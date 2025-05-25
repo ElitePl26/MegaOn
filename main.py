@@ -14,8 +14,12 @@ logging.basicConfig(level=logging.INFO)
 
 # === Função /start ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+ try:
     with open("banner.jpg", "rb") as image:
         await context.bot.send_photo(chat_id=update.effective_chat.id, photo=InputFile(image))
+except FileNotFoundError:
+    print("⚠️ banner.jpg não encontrado. Pulando envio de imagem.")
+
 
     msg = (
         "🔥💀 BEM-VINDO AO *MEGA VAZA +* — O ESQUEMA MAIS INSANO DO BRASIL! 🔥💀\n\n"
@@ -93,4 +97,16 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(handle_button))
 
 print("🤖 BOT RODANDO NO GRAU 🔥")
+
+# === Tratador de erros ===
+async def erro(update, context):
+    print(f"❌ ERRO NO BOT: {context.error}")
+    if update:
+        try:
+            await update.message.reply_text("⚠️ Deu ruim aqui, mano. Tenta de novo mais tarde.")
+        except:
+            pass
+
+app.add_error_handler(erro)
+
 app.run_polling()
