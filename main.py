@@ -73,10 +73,11 @@ async def gerar_pagamento(chat_id, context, plano_nome, valor):
         # Envia QR code real PIX
         await context.bot.send_photo(chat_id=chat_id, photo=f"data:image/jpeg;base64,{qr_data}")
 
-        # Envia link de pagamento MercadoPago
+        # Envia link de pagamento MercadoPago com string bem fechada
         await context.bot.send_message(
             chat_id=chat_id,
             text=f"✅ Ou clique aqui pra pagar via MercadoPago:
+
 💳 {init_point}
 
 ⚠️ Após o pagamento, aguarde a confirmação automática!",
