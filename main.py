@@ -30,7 +30,7 @@ def webhook():
                 "*🔥 Bem-vindo ao Mega Vaza Bot!*"
 
 
-                "Aqui você terá acesso ao conteúdo mais insano do submundo digital.
+                "Aqui você terá acesso ao conteúdo mais insano do submundo digital."
 
 
                 "Escolha uma opção abaixo para continuar:"
