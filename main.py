@@ -27,12 +27,12 @@ def webhook():
 
         if texto == "/start":
             resposta = (
-                "🔥 Bem-vindo ao *Mega Vaza Bot!*
+                "*🔥 Bem-vindo ao Mega Vaza Bot!*"
 
-"
+
                 "Aqui você terá acesso ao conteúdo mais insano do submundo digital.
 
-"
+
                 "Escolha uma opção abaixo para continuar:"
             )
             botoes = {
@@ -64,14 +64,14 @@ def webhook():
         resposta = ""
         if data_clicada == "planos_vip":
             resposta = (
-                "💰 *Nossos Planos VIP:*
+                "💰 *Nossos Planos VIP:*"
 
-"
-                "🔥 1 Ano: R$ 69,99
-💸 Mensal: R$ 22,99
-😈 Semanal: R$ 14,99
 
-"
+                 "🔥 1 Ano: R$ 69,99"
+                 "💸 Mensal: R$ 22,99"
+                "😈 Semanal: R$ 14,99"
+
+
                 "Pague e receba o link automático direto aqui no bot!"
             )
         elif data_clicada == "ver_status":
